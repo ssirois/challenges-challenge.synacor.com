@@ -1,0 +1,7 @@
+# editor files
+*~
+*.swp
+
+# generated files
+bin
+vendor
