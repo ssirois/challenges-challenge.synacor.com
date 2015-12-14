@@ -1,11 +1,18 @@
 {
-  "name": "ismog/intranet",
+  "name": "bidouilleur/challenge.synacor.com",
 
   "config": {
     "bin-dir": "bin/"
   },
 
+  "autoload": {
+    "psr-4": {
+      "Synacor\\Challenge\\": "src/synacor/challenge/"
+    }
+  },
+
   "require-dev": {
-    "behat/behat": "2.4.*@stable"
+    "behat/behat": "2.4.*@stable",
+    "phpunit/phpunit": "5.0.*@stable"
   }
 }

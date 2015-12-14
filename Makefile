@@ -3,8 +3,8 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 COMPOSER		:= "/usr/bin/composer"
 PHP			:= "/usr/bin/php"
 
-PHPDIR			:= "src"
-PHPFILES		:= $(call rwildcard,./,*.php)
+PHPDIR			:= "src/"
+PHPFILES		:= $(call rwildcard,$(PHPDIR),*.php)
 PHP_TARGETS		:= $(patsubst %,check-php-syntax_%,$(PHPFILES))
 
 .PHONY: check
