@@ -9,7 +9,7 @@ PHP_TARGETS		:= $(patsubst %,check-php-syntax_%,$(PHPFILES))
 
 .PHONY: check
 check:	setup-toolchain check-php-syntax
-	bin/behat
+	bin/behat --stop-on-failure
 
 .PHONY: check-php-syntax
 check-php-syntax: $(PHP_TARGETS)
