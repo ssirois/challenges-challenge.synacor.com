@@ -3,8 +3,8 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 COMPOSER		:= "/usr/bin/composer"
 PHP			:= "/usr/bin/php"
 
-PHPDIR			:= "src/"
-PHPFILES		:= $(call rwildcard,$(PHPDIR),*.php)
+PHPDIR			:= "src"
+PHPFILES		:= $(call rwildcard,$(PHPDIR)/,*.php)
 PHP_TARGETS		:= $(patsubst %,check-php-syntax_%,$(PHPFILES))
 
 .PHONY: check
@@ -20,6 +20,10 @@ check-php-syntax_./%:
 .PHONY: setup-toolchain
 setup-toolchain:
 	$(COMPOSER) install --no-interaction
+
+.PHONY: run
+run:
+	$(PHP) $(PHPDIR)/challenge.php
 
 .PHONY: clean
 clean:
