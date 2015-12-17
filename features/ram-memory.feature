@@ -62,4 +62,4 @@ Feature: Ram Memory
       """
       1000000000001000
       """
-    Then virtual machine should be crashed
+    Then virtual machine state should be "CRASHED"

@@ -78,7 +78,7 @@ class FeatureContext extends BehatContext
    */
   public function theFollowingProgramIsLoaded(PyStringNode $rawProgram)
   {
-    $programCodeStream = $this->getProgramCodeMemoryStream($rawProgram);
+    $programCodeStream = $this->getProgramCodeMemoryStream($rawProgram->getRaw());
 
     $this->vm->loadProgram(new Program($programCodeStream));
 
@@ -90,7 +90,7 @@ class FeatureContext extends BehatContext
    */
   public function memoryAtAddressSpaceShouldHave($address, $expected)
   {
-    $memoryValue = $this->vm->getMemoryValueAtAddress($address);
+    $memoryValue = $this->vm->getRamValueAtAddress($address);
     $actual = decbin($memoryValue);
     assertEquals($expected, $actual);
   }
@@ -100,16 +100,32 @@ class FeatureContext extends BehatContext
    */
   public function integerValueOfMemoryAtAddressSpaceShouldBe($address, $expected)
   {
-    $actual = $this->vm->getMemoryValueAtAddress($address);
+    $actual = $this->vm->getRamValueAtAddress($address);
     assertEquals($expected, $actual);
   }
 
   /**
-   * @Then /^virtual machine should be crashed$/
+   * @Then /^virtual machine state should be "([^"]*)"$/
    */
-  public function virtualMachineShouldBeCrashed()
+  public function virtualMachineStateShouldBe($expected)
   {
-    assertTrue($this->vm->isCrashed());
+    assertEquals(VirtualMachine::STATES["$expected"], $this->vm->getState());
+  }
+
+  /**
+   * @Given /^we execute loaded program$/
+   */
+  public function weExecuteLoadedProgram()
+  {
+    $this->vm->executeLoadedProgram();
+  }
+
+  /**
+   * @Then /^user should see "([^"]*)"$/
+   */
+  public function userShouldSee($expected)
+  {
+    assertEquals($expected, $this->vm->getOutput());
   }
 
   /**
@@ -125,8 +141,8 @@ class FeatureContext extends BehatContext
     foreach ($programStruct as $bits) {
       fwrite($programCodeStream, pack('v', bindec($bits)));
     }
-    rewind($programCodeStream);
 
+    rewind($programCodeStream);
     return $programCodeStream;
   }
 }
