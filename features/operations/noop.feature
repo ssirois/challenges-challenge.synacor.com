@@ -11,5 +11,4 @@ Feature: No Operation
     0000000000010101
     """
     And we execute loaded program
-    Then memory at address space 0 should have "0000000000010101"
-    And virtual machine state should be "IDLE"
+    Then virtual machine state should be "IDLE"

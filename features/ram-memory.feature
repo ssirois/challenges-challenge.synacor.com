@@ -1,3 +1,5 @@
+# Those are more unit tests than behavior tests... but I needed those to feel
+# safe reading bits in "ram" correctly.
 Feature: Ram Memory
   In order to execute challenge.synacor.com programs
   As a virtual machine
