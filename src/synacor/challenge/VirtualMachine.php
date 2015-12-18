@@ -1,7 +1,7 @@
 <?php
 namespace Synacor\Challenge;
 
-class VirtualMachine {
+class VirtualMachine implements \SplObserver {
   const STATES = [ 'STARTED' => 0, 'HALTED' => 1, 'CRASHED' => 2, 'IDLE' => 3, 'EXECUTING' => 4 ];
   const MAX_VALUE = 32775;
   # TODO: rename this because the last litteral value is actually 32767
@@ -9,13 +9,18 @@ class VirtualMachine {
   const OPERATIONS = [ 'HALT' => 0, 'OUT' => 19, 'NOOP' => 21 ];
 
   private $ram;
+  private $ramIterator;
   private $state;
   private $stdOut;
+  private $interuptHandler;
 
   public function __construct() {
     $this->ram = new MemoryModule();
     $this->setState(self::STATES['STARTED']);
     $this->stdOut = '';
+
+    $this->interuptHandler = new InteruptHandler();
+    $this->interuptHandler->attach($this);
   }
 
   public function loadProgram($program) {
@@ -28,6 +33,7 @@ class VirtualMachine {
       }
     }
 
+    $this->ramIterator = $this->ram->getIterator();
   }
 
   private function isWordValid($word) {
@@ -49,36 +55,36 @@ class VirtualMachine {
 
     $this->setState(self::STATES['EXECUTING']);
 
-    $currentMemoryAddress = 0;
-    do {
-      $operation = $this->getRamValueAtAddress($currentMemoryAddress);
-      if ($operation === FALSE) {
-        return FALSE;
-      }
+    $this->ramIterator->rewind();
+    while (
+      !is_null($operation = $this->buildOperation($this->ramIterator->current()))
+      &&
+      ($this->getState() != self::STATES['HALTED'])
+    ) {
+      $operation->execute();
 
-      switch ($operation) {
-        case self::OPERATIONS['OUT']:
-          $currentMemoryAddress++;
-          $this->stdOut .= chr($this->getRamValueAtAddress($currentMemoryAddress));
-          break;
-        case self::OPERATIONS['HALT']:
-          $this->setState(self::STATES['HALTED']);
-          break 2;
-        case self::OPERATIONS['NOOP']:
-          $this->setState(self::STATES['IDLE']);
-          break;
-      }
-
-      $currentMemoryAddress++;
-    } while (($currentMemoryAddress < $this->ram->getUsedMemorySize()) && ($this->getState() != self::STATES['HALTED']));
+      $this->ramIterator->next();
+    }
   }
 
+  private function buildOperation($memoryValue) {
+    if (!is_null($operationNumber = $this->unpackMemoryData($memoryValue)))
+      return Operation::getInstance($operationNumber, $this->ramIterator, $this->interuptHandler);
+    else
+      return NULL;
+  }
+
+  /* TODO: this is exposed only because of our "unit tests"... it shouldn't
+   * test the behaviour... or make sure to get output from legitimate methods
+   * why introduce a method that is only used by our tests... we should refactor
+   * this now that we are "elsewhere", thanks to our architecture discovery
+   */
   public function getRamValueAtAddress($address) {
     $value = $this->ram->readValueAtAddress($address);
     if ($value === FALSE || strlen($value) < Program::WORD_SIZE)
       return FALSE;
 
-    return unpack('v', $value)[1] % self::LAST_LITTERAL_VALUE;
+    return $this->unpackMemoryData($value);
   }
 
   public function getOutput() {
@@ -91,5 +97,28 @@ class VirtualMachine {
 
   private function setState($newState) {
     $this->state = $newState;
+  }
+
+  private function unpackMemoryData($data) {
+    if ($data === FALSE || strlen($data) < Program::WORD_SIZE)
+      return NULL;
+
+    return unpack('v', $data)[1] % self::LAST_LITTERAL_VALUE;
+  }
+
+  /*
+   * SplObserver interface
+   */
+  public function update(\SplSubject $subject) {
+    $interuptSignal = $subject->getSignal();
+    switch ($interuptSignal->getName()) {
+      case 'OUTPUT':
+        $data = $this->unpackMemoryData($interuptSignal->getData());
+        $this->stdOut .= chr($data);
+        break;
+      case 'STATE_CHANGE':
+        $this->setState(self::STATES[$interuptSignal->getData()]);
+        break;
+    }
   }
 }

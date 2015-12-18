@@ -19,4 +19,8 @@ class MemoryModule {
   public function getUsedMemorySize() {
     return count($this->memoryStack);
   }
+
+  public function getIterator() {
+    return new \ArrayIterator($this->memoryStack);
+  }
 }
