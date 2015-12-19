@@ -113,6 +113,14 @@ class FeatureContext extends BehatContext
   }
 
   /**
+   * @Given /^virtual machine state should not be "([^"]*)"$/
+   */
+  public function virtualMachineStateShouldNotBe($expected)
+  {
+    assertNotEquals(VirtualMachine::STATES["$expected"], $this->vm->getState());
+  }
+
+  /**
    * @Given /^we execute loaded program$/
    */
   public function weExecuteLoadedProgram()
@@ -126,6 +134,15 @@ class FeatureContext extends BehatContext
   public function userShouldSee($expected)
   {
     assertEquals($expected, $this->vm->getOutput());
+  }
+
+  /**
+   * @Then /^current memory address should be (\d+)$/
+   */
+  public function currentMemoryAddressShouldBe($expected)
+  {
+    $actual = $this->vm->getCurrentMemoryAddress();
+    assertEquals($expected, $actual);
   }
 
   /**

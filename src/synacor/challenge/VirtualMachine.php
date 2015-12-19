@@ -63,7 +63,16 @@ class VirtualMachine implements \SplObserver {
     ) {
       $operation->execute();
 
-      $this->ramIterator->next();
+      // todo: simpliest code for our program to work for now...
+      // but this is quite ugly.
+      // let's hope we discover how to bump this out! ;)
+      if (
+        !($operation instanceof BaseJumpOperation)
+        &&
+        ($this->getState() != self::STATES['HALTED'])
+      ) {
+        $this->ramIterator->next();
+      }
     }
   }
 
@@ -85,6 +94,13 @@ class VirtualMachine implements \SplObserver {
       return FALSE;
 
     return $this->unpackMemoryData($value);
+  }
+
+  /* TODO: @see todo comment on getRamValueAtAddress method
+   *
+   */
+  public function getCurrentMemoryAddress() {
+    return $this->ramIterator->key();
   }
 
   public function getOutput() {

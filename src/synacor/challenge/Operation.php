@@ -2,7 +2,7 @@
 namespace Synacor\Challenge;
 
 abstract class Operation {
-  const OPERATIONS = [ 'HALT' => 0, 'OUT' => 19, 'NOOP' => 21 ];
+  const OPERATIONS = [ 'HALT' => 0, 'JMP' => 6, 'JT' => 7, 'JF' => 8, 'OUT' => 19, 'NOOP' => 21 ];
 
   abstract public function execute();
 
@@ -16,6 +16,15 @@ abstract class Operation {
         break;
       case self::OPERATIONS['NOOP']:
         return new NoOperation($interuptHandler);
+        break;
+      case self::OPERATIONS['JMP']:
+        return new JumpOperation($memoryIterator);
+        break;
+      case self::OPERATIONS['JT']:
+        return new JumpIfTrueOperation($memoryIterator);
+        break;
+      case self::OPERATIONS['JF']:
+        return new JumpIfFalseOperation($memoryIterator);
         break;
       default:
         return new EmptyOperation();
