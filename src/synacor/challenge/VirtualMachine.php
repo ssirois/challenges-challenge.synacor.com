@@ -5,6 +5,7 @@ class VirtualMachine implements \SplObserver {
   const STATES = [ 'STARTED' => 0, 'HALTED' => 1, 'CRASHED' => 2, 'IDLE' => 3, 'EXECUTING' => 4 ];
   const OPERATIONS = [ 'HALT' => 0, 'OUT' => 19, 'NOOP' => 21 ];
 
+  private $registers;
   private $ram;
   private $ramIterator;
   private $state;
@@ -12,12 +13,25 @@ class VirtualMachine implements \SplObserver {
   private $interuptHandler;
 
   public function __construct() {
+    $this->initRegisters();
     $this->ram = new MemoryModule();
     $this->setState(self::STATES['STARTED']);
     $this->stdOut = '';
 
     $this->interuptHandler = new InteruptHandler();
     $this->interuptHandler->attach($this);
+  }
+
+  private function initRegisters() {
+    $this->registers = array(0 => NULL,
+                             1 => NULL,
+                             2 => NULL,
+                             3 => NULL,
+                             4 => NULL,
+                             5 => NULL,
+                             6 => NULL,
+                             7 => NULL
+                            );
   }
 
   public function loadProgram($program) {
@@ -87,6 +101,14 @@ class VirtualMachine implements \SplObserver {
     return $this->ramIterator->key();
   }
 
+  /* TODO: @see todo comment on getRamValueAtAddress method
+   *
+   */
+  public function getRegisterValue($register) {
+    $word = $this->registers[$register];
+    return $word->getValue();
+  }
+
   public function getOutput() {
     return $this->stdOut;
   }
@@ -111,6 +133,11 @@ class VirtualMachine implements \SplObserver {
         break;
       case 'STATE_CHANGE':
         $this->setState(self::STATES[$interuptSignal->getData()]);
+        break;
+      case 'WRITE_2_REGISTER':
+        $register = array_keys($interuptSignal->getData())[0];
+        $dataToStore = $interuptSignal->getData()[$register];
+        $this->registers[$register] = $dataToStore;
         break;
     }
   }

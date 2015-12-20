@@ -146,6 +146,15 @@ class FeatureContext extends BehatContext
   }
 
   /**
+   * @Then /^register (\d+) value should be (\d+)$/
+   */
+  public function registerValueShouldBe($register, $expected)
+  {
+    $actual = $this->vm->getRegisterValue($register);
+    assertEquals($expected, $actual);
+  }
+
+  /**
    * Test Helpers
    */
   private function getProgramCodeMemoryStream($rawProgram)

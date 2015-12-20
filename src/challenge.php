@@ -11,5 +11,6 @@ $vm->loadProgram(new Program($programFile));
 $vm->executeLoadedProgram();
 
 echo $vm->getOutput();
+echo $vm->getState();
 
 fclose($programFile);
