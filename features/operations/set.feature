@@ -14,3 +14,12 @@ Feature: Set operation
     """
     And we execute loaded program
     Then register 0 value should be 2
+
+  Scenario: Put a value inside last register (sentinel value)
+    Given a virtual machine is created
+    And the following program is loaded:
+    """
+    0000000000000001 1000000000000111 0000000000000100
+    """
+    And we execute loaded program
+    Then register 7 value should be 4
