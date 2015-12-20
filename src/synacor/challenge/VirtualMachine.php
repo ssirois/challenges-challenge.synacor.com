@@ -12,11 +12,11 @@ class VirtualMachine implements \SplObserver {
   private $stdOut;
   private $interuptHandler;
 
-  public function __construct() {
+  public function __construct($stdOut) {
     $this->initRegisters();
     $this->ram = new MemoryModule();
     $this->setState(self::STATES['STARTED']);
-    $this->stdOut = '';
+    $this->stdOut = $stdOut;
 
     $this->interuptHandler = new InteruptHandler();
     $this->interuptHandler->attach($this);
@@ -109,10 +109,6 @@ class VirtualMachine implements \SplObserver {
     return $word->getValue();
   }
 
-  public function getOutput() {
-    return $this->stdOut;
-  }
-
   public function getState() {
     return $this->state;
   }
@@ -129,7 +125,7 @@ class VirtualMachine implements \SplObserver {
     switch ($interuptSignal->getName()) {
       case 'OUTPUT':
         $data = $interuptSignal->getData();
-        $this->stdOut .= chr($data);
+        fwrite($this->stdOut, chr($data));
         break;
       case 'STATE_CHANGE':
         $this->setState(self::STATES[$interuptSignal->getData()]);

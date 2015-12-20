@@ -18,6 +18,7 @@ use Synacor\Challenge\Program;
 class FeatureContext extends BehatContext
 {
   private $vm;
+  private $virtualMachineOutputStream;
 
   /**
    * Initializes context.
@@ -27,7 +28,12 @@ class FeatureContext extends BehatContext
    */
   public function __construct(array $parameters)
   {
-      // Initialize your context here
+    $this->virtualMachineOutputStream = fopen('php://temp', 'w+t');
+  }
+
+  public function __destruct()
+  {
+    fclose($this->virtualMachineOutputStream);
   }
 
   /**
@@ -38,11 +44,12 @@ class FeatureContext extends BehatContext
   }
 
   /**
+   * @Given /^a virtual machine is created$/
    * @When /^I create a new virtual machine$/
    */
   public function iCreateANewVirtualMachine()
   {
-    $this->vm = new VirtualMachine();
+    $this->vm = new VirtualMachine($this->virtualMachineOutputStream);
   }
 
   /**
@@ -51,14 +58,6 @@ class FeatureContext extends BehatContext
   public function aNewVirtualMachineShouldBeRunning()
   {
     assertFalse(empty($this->vm));
-  }
-
-  /**
-   * @Given /^a virtual machine is created$/
-   */
-  public function aVirtualMachineIsCreated()
-  {
-    $this->vm = new VirtualMachine();
   }
 
   /**
@@ -133,7 +132,7 @@ class FeatureContext extends BehatContext
    */
   public function userShouldSee($expected)
   {
-    assertEquals($expected, $this->vm->getOutput());
+    assertEquals($expected, stream_get_contents($this->virtualMachineOutputStream, -1, 0));
   }
 
   /**
