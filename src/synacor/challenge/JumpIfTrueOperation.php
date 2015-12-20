@@ -10,9 +10,9 @@ class JumpIfTrueOperation extends BaseJumpOperation {
 
     $this->memoryIterator = $memoryIterator;
     $this->memoryIterator->next();
-    $this->isAssertionTrue = unpack('v', $this->memoryIterator->current())[1];
+    $this->isAssertionTrue = $this->memoryIterator->current()->getValue();
     $this->memoryIterator->next();
-    $this->nextAddress = unpack('v', $this->memoryIterator->current())[1];
+    $this->nextAddress = $this->memoryIterator->current()->getValue();
   }
 
   public function execute() {

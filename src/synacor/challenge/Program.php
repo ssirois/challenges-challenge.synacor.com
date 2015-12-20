@@ -2,8 +2,6 @@
 namespace Synacor\Challenge;
 
 class Program {
-  const WORD_SIZE = 2; // bytes (or 16 bits)
-
   private $stream;
 
   public function __construct($stream) {
@@ -14,6 +12,9 @@ class Program {
     if (feof($this->stream))
       return FALSE;
     else
-      return fread($this->stream, self::WORD_SIZE);
+      return new Word(fread($this->stream, Word::SIZE_IN_BYTES));
+  }
+
+  public function isValid() {
   }
 }

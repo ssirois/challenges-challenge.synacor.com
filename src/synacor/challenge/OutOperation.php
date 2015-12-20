@@ -7,7 +7,7 @@ class OutOperation extends Operation {
 
   public function __construct($memoryIterator, $interuptHandler) {
     $memoryIterator->next();
-    $this->dataToBeOutput = $memoryIterator->current();
+    $this->dataToBeOutput = $memoryIterator->current()->getValue();
     $this->interuptHandler = $interuptHandler;
   }
 

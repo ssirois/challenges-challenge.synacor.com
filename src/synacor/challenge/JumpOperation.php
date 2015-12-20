@@ -9,7 +9,7 @@ class JumpOperation extends BaseJumpOperation {
 
     $this->memoryIterator = $memoryIterator;
     $this->memoryIterator->next();
-    $this->nextAddress = unpack('v', $memoryIterator->current())[1];
+    $this->nextAddress = $memoryIterator->current()->getValue();
   }
 
   public function execute() {
