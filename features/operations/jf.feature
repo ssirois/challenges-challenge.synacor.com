@@ -39,3 +39,12 @@ Feature: Jump if false operation
     """
     And we execute loaded program
     Then current memory address should be 7
+
+  Scenario: Bouncing around with registers (recursive jump)
+    Given a virtual machine is created
+    And the following program is loaded:
+    """
+    0000000000000001 1000000000000000 1000000000000001 0000000000000001 1000000000000001 0000000000001010 0000000000001000 0000000000000000 1000000000000000 0000000000000000 0000000000000000 0000000100000001
+    """
+    And we execute loaded program
+    Then current memory address should be 10

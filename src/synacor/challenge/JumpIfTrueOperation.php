@@ -6,20 +6,14 @@ class JumpIfTrueOperation extends BaseJumpOperation {
   private $isAssertionTrue;
 
   public function __construct($memoryIterator, $registersSnapshot) {
-    parent::__construct($memoryIterator);
+    parent::__construct($memoryIterator, $registersSnapshot);
 
     $this->memoryIterator->next();
     $this->isAssertionTrue = $this->memoryIterator->current()->getValue();
 
     $this->memoryIterator->next();
     $word = $this->memoryIterator->current();
-    if ($word->isOverflowed()) {
-      $register = $registersSnapshot[$word->getValue()];
-      $this->nextAddress = $register->getValue();
-    }
-    else {
-      $this->nextAddress = $word->getValue();
-    }
+    $this->nextAddress = $this->dereferenceWordUpToValue($word);
   }
 
   public function execute() {

@@ -6,7 +6,9 @@ class SetOperation extends Operation {
   private $dataToStore;
   private $interuptHandler;
 
-  public function __construct($memoryIterator, $interuptHandler) {
+  public function __construct($memoryIterator, $interuptHandler, $registersSnapshot) {
+    parent::__construct($registersSnapshot);
+
     $memoryIterator->next();
     $this->register = $memoryIterator->current()->getValue();
     $memoryIterator->next();

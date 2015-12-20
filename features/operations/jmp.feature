@@ -28,3 +28,12 @@ Feature: Jump operation
     """
     And we execute loaded program
     Then current memory address should be 6
+
+  Scenario: Bouncing around with registers (recursive jump)
+    Given a virtual machine is created
+    And the following program is loaded:
+    """
+    0000000000000001 1000000000000000 1000000000000001 0000000000000001 1000000000000001 0000000000001001 0000000000000110 1000000000000000 0000000000000000 0000000000000000 0000000100000001
+    """
+    And we execute loaded program
+    Then current memory address should be 9
