@@ -76,7 +76,7 @@ class VirtualMachine implements \SplObserver {
 
   private function buildOperation($memoryValue) {
     if (!is_null($operationNumber = $memoryValue))
-      return Operation::getInstance($operationNumber, $this->ramIterator, $this->interuptHandler);
+      return Operation::getInstance($operationNumber, $this->ramIterator, $this->interuptHandler, $this->registers);
     else
       return NULL;
   }

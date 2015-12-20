@@ -6,10 +6,10 @@ abstract class Operation {
 
   abstract public function execute();
 
-  final public static function getInstance($operation, \SeekableIterator $memoryIterator, $interuptHandler) {
+  final public static function getInstance($operation, \SeekableIterator $memoryIterator, $interuptHandler, $registersSnapshot) {
     switch ($operation) {
       case self::OPERATIONS['OUT']:
-        return new OutOperation($memoryIterator, $interuptHandler);
+        return new OutOperation($memoryIterator, $interuptHandler, $registersSnapshot);
         break;
       case self::OPERATIONS['HALT']:
         return new HaltOperation($interuptHandler);
@@ -18,13 +18,13 @@ abstract class Operation {
         return new NoOperation($interuptHandler);
         break;
       case self::OPERATIONS['JMP']:
-        return new JumpOperation($memoryIterator);
+        return new JumpOperation($memoryIterator, $registersSnapshot);
         break;
       case self::OPERATIONS['JT']:
-        return new JumpIfTrueOperation($memoryIterator);
+        return new JumpIfTrueOperation($memoryIterator, $registersSnapshot);
         break;
       case self::OPERATIONS['JF']:
-        return new JumpIfFalseOperation($memoryIterator);
+        return new JumpIfFalseOperation($memoryIterator, $registersSnapshot);
         break;
       case self::OPERATIONS['SET']:
         return new SetOperation($memoryIterator, $interuptHandler);

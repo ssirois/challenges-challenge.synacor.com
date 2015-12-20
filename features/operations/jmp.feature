@@ -15,3 +15,16 @@ Feature: Jump operation
     """
     And we execute loaded program
     Then current memory address should be 4
+
+  Scenario: Jumping to an address that has been stored to a register (indirect jump)
+    Given a virtual machine is created
+    And the following program is loaded:
+    # 0000000000000001 = set operation
+    # 1000000000000000 = address of register 0
+    # 0000000000000110 = 6 (adress to which we want to go indirectly)
+    # 0000000000000110 = jmp operation
+    """
+    0000000000000001 1000000000000000 0000000000000110 0000000000000110 1000000000000000 0000000000000001 0000000000000000
+    """
+    And we execute loaded program
+    Then current memory address should be 6

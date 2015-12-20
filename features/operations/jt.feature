@@ -26,3 +26,16 @@ Feature: Jump if true operation
     """
     And we execute loaded program
     Then current memory address should be 5
+
+  Scenario: Jumping to an address that has been stored to a register (indirect jump)
+    Given a virtual machine is created
+    And the following program is loaded:
+    # 0000000000000001 = set operation
+    # 1000000000000000 = address of register 0
+    # 0000000000000111 = 7 (adress to which we want to go indirectly)
+    # 0000000000000111 = jt operation
+    """
+    0000000000000001 1000000000000000 000000000000111 0000000000000111 0000000000000001 1000000000000000 0000000000000000 0000000000000000
+    """
+    And we execute loaded program
+    Then current memory address should be 7

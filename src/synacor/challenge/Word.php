@@ -18,7 +18,7 @@ class Word {
   public function getValue() {
     $value = $this->getUnpackedBits();
 
-    if ($this->isValid() && $value > self::LAST_LITTERAL_VALUE) {
+    if ($this->isValid() && $this->isOverflowed()) {
       $value %= self::OVERFLOW_MODULO;
     }
 
@@ -43,5 +43,15 @@ class Word {
       return true;
 
     return ($this->getUnpackedBits() <= self::MAX_VALUE);
+  }
+
+  public function isOverflowed() {
+    $value = $this->getUnpackedBits();
+
+    $overflowed = FALSE;
+    if ($value > self::LAST_LITTERAL_VALUE)
+      $overflowed = TRUE;
+
+    return $overflowed;
   }
 }

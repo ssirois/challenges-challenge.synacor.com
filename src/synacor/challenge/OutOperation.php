@@ -5,9 +5,16 @@ class OutOperation extends Operation {
   private $dataToBeOutput;
   private $interuptHandler;
 
-  public function __construct($memoryIterator, $interuptHandler) {
+  public function __construct($memoryIterator, $interuptHandler, $registersSnapshot) {
     $memoryIterator->next();
-    $this->dataToBeOutput = $memoryIterator->current()->getValue();
+    $word = $memoryIterator->current();
+    if ($word->isOverflowed()) {
+      $register = $registersSnapshot[$word->getValue()];
+      $this->dataToBeOutput = $register->getValue();
+    }
+    else {
+      $this->dataToBeOutput = $word->getValue();
+    }
     $this->interuptHandler = $interuptHandler;
   }
 
