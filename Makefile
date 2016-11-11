@@ -1,7 +1,7 @@
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
-COMPOSER		:= "/usr/bin/composer"
-PHP			:= "/usr/bin/php"
+COMPOSER		:= `which composer`
+PHP			:= `which php`
 
 PHPDIR			:= "src"
 PHPFILES		:= $(call rwildcard,$(PHPDIR)/,*.php)
